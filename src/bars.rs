@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use crate::signals::{Real, Signal, SignalCode, Signals};
 
 #[derive(Debug)]
-struct Bar {
+pub(crate) struct Bar {
     signal: Signal,
     value: Option<Real>,
     width: usize,
@@ -39,10 +39,10 @@ impl std::fmt::Display for Bar {
 }
 
 #[derive(Debug, Default)]
-struct Bars(pub BTreeMap<SignalCode, Bar>);
+pub(crate) struct Bars(pub BTreeMap<SignalCode, Bar>);
 
 impl Bars {
-    fn update(&mut self, code: String, value: Real) {
+    pub(crate) fn update(&mut self, code: String, value: Real) {
         self.0.entry(code).and_modify(|x| x.value = Some(value));
     }
 }
@@ -61,6 +61,15 @@ impl From<Signals> for Bars {
         }
 
         bars
+    }
+}
+
+impl std::fmt::Display for Bars {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for (_, bar) in &self.0 {
+            write!(f, "{}\n", bar)?;
+        }
+        Ok(())
     }
 }
 

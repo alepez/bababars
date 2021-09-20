@@ -4,7 +4,7 @@ use std::str::FromStr;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub(crate) struct Config {
-    signals: Signals,
+    pub signals: Signals,
 }
 
 impl FromStr for Config {
