@@ -57,7 +57,7 @@ mod tests {
     #[test]
     fn test_config_signal() {
         let s = "name = \"A\"\nunit = \"rad\"\n\n[range]\nmin = 0.0\nmax = 6.283185307179586\n";
-        let s: Signal = toml::from_str(s).unwrap();
+        let _s: Signal = toml::from_str(s).unwrap();
     }
 
     #[test]
@@ -73,6 +73,6 @@ name = "A"
 unit = "rad"
 range = { min = 0.0, max =  6.283185307179586 }
             "#;
-        let s: Config = toml::from_str(s).unwrap();
+        let _s: Config = toml::from_str(s).unwrap();
     }
 }
