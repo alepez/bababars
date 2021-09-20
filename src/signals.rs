@@ -1,8 +1,7 @@
-
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, str::FromStr};
 
-type Real = f64;
+pub(crate) type Real = f64;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub(crate) struct Range {
