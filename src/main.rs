@@ -1,4 +1,6 @@
+mod bars;
 mod config;
+mod signals;
 
 fn main() {
     let config = r#"
