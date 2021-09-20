@@ -1,5 +1,8 @@
-use crate::signals::{Real, Signal};
+use std::collections::BTreeMap;
 
+use crate::signals::{Real, Signal, SignalCode, Signals};
+
+#[derive(Debug)]
 struct Bar {
     signal: Signal,
     value: Option<Real>,
@@ -32,6 +35,26 @@ impl std::fmt::Display for Bar {
         write!(f, "{:=^1$}", "", fill_width)?;
         write!(f, "{: ^1$}", "", empty_width)?;
         write!(f, "] {} ({})", &self.signal.name, &self.signal.unit)
+    }
+}
+
+#[derive(Debug, Default)]
+struct Bars(pub BTreeMap<SignalCode, Bar>);
+
+impl From<Signals> for Bars {
+    fn from(signals: Signals) -> Self {
+        let mut bars = Bars::default();
+
+        for s in signals {
+            let bar = Bar {
+                signal: s.1.clone(),
+                value: None,
+                width: 100,
+            };
+            bars.0.insert(s.0, bar);
+        }
+
+        bars
     }
 }
 
@@ -95,5 +118,33 @@ mod tests {
         let bar_str = bar.to_string();
 
         assert_eq!(&bar_str, "[==================================================                                                  ] A (rad)");
+    }
+
+    #[test]
+    fn test_bars_from_signals() {
+        let mut signals = Signals::new();
+
+        let a = Signal {
+            name: "A".into(),
+            unit: "rad".into(),
+            range: Range {
+                min: 0.0,
+                max: 6.283185307179586,
+            },
+        };
+
+        let b = Signal {
+            name: "B".into(),
+            unit: "deg".into(),
+            range: Range {
+                min: 0.0,
+                max: 359.0,
+            },
+        };
+
+        signals.insert("A".into(), a);
+        signals.insert("B".into(), b);
+
+        let bars = Bars::from(signals);
     }
 }
