@@ -41,6 +41,12 @@ impl std::fmt::Display for Bar {
 #[derive(Debug, Default)]
 struct Bars(pub BTreeMap<SignalCode, Bar>);
 
+impl Bars {
+    fn update(&mut self, code: String, value: Real) {
+        self.0.entry(code).and_modify(|x| x.value = Some(value));
+    }
+}
+
 impl From<Signals> for Bars {
     fn from(signals: Signals) -> Self {
         let mut bars = Bars::default();
@@ -145,6 +151,9 @@ mod tests {
         signals.insert("A".into(), a);
         signals.insert("B".into(), b);
 
-        let bars = Bars::from(signals);
+        let mut bars = Bars::from(signals);
+
+        bars.update("A".into(), 5.0);
+        bars.update("B".into(), 100.0);
     }
 }
