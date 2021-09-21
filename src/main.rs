@@ -44,6 +44,9 @@ fn clear_screen() {
 
 fn main() {
     let config = r#"
+[render]
+width = 100
+
 [signals.A]
 name = "A"
 unit = "deg"
@@ -132,5 +135,7 @@ range = { min = 0.0, max =  360.0 }
             bars.update(x.key, x.value);
             write!(s, "{}", &bars);
         }
+
+        assert!(!s.is_empty());
     }
 }

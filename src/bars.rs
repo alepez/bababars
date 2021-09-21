@@ -35,7 +35,13 @@ impl std::fmt::Display for Bar {
         write!(f, "[")?;
         write!(f, "{:=^1$}", "", fill_width)?;
         write!(f, "{: ^1$}", "", empty_width)?;
-        write!(f, "] {} ({})", &self.signal.name, &self.signal.unit)
+        write!(f, "] {}", &self.signal.name)?;
+
+        if let Some(x) = self.value {
+            write!(f, " {:10.3} ", x)?;
+        }
+
+        write!(f, "({})", &self.signal.unit)
     }
 }
 
@@ -129,13 +135,13 @@ mod tests {
 
         let bar_str = bar.to_string();
 
-        assert_eq!(&bar_str, "[                                                                                                    ] A (rad)");
+        assert_eq!(&bar_str, "[                                                                                                    ] A      0.000 (rad)");
 
         bar.update(3.14);
 
         let bar_str = bar.to_string();
 
-        assert_eq!(&bar_str, "[==================================================                                                  ] A (rad)");
+        assert_eq!(&bar_str, "[==================================================                                                  ] A       0.000  (rad)");
     }
 
     #[test]
