@@ -52,13 +52,13 @@ impl From<Config> for Bars {
     fn from(config: Config) -> Self {
         let mut bars = Bars::default();
 
-        let Config { signals, .. } = config;
+        let Config { signals, render } = config;
 
         for s in signals {
             let bar = Bar {
                 signal: s.1.clone(),
                 value: None,
-                width: 100,
+                width: render.width,
             };
             bars.0.insert(s.0, bar);
         }
