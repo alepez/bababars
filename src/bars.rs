@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 
 use crate::signals::{Real, Signal, SignalCode, Signals};
+use crate::Config;
 
 #[derive(Debug)]
 pub(crate) struct Bar {
@@ -47,9 +48,11 @@ impl Bars {
     }
 }
 
-impl From<Signals> for Bars {
-    fn from(signals: Signals) -> Self {
+impl From<Config> for Bars {
+    fn from(config: Config) -> Self {
         let mut bars = Bars::default();
+
+        let Config { signals, .. } = config;
 
         for s in signals {
             let bar = Bar {
@@ -160,7 +163,9 @@ mod tests {
         signals.insert("A".into(), a);
         signals.insert("B".into(), b);
 
-        let mut bars = Bars::from(signals);
+        let config = Config { signals };
+
+        let mut bars = Bars::from(config);
 
         bars.update("A".into(), 5.0);
         bars.update("B".into(), 100.0);

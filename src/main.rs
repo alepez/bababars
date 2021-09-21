@@ -89,7 +89,7 @@ range = { min = 0.0, max =  360.0 }
 
     let config: Config = config.parse().unwrap();
 
-    let mut bars = Bars::from(config.signals.clone());
+    let mut bars = Bars::from(config);
 
     let input_stream = InputStreamStdin::new();
 
