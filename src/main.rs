@@ -70,6 +70,10 @@ impl Iterator for InputStreamStdin {
     }
 }
 
+fn clear_screen() {
+    print!("\x1B[2J\x1B[1;1H");
+}
+
 fn main() {
     let config = r#"
 [signals.A]
@@ -90,8 +94,8 @@ range = { min = 0.0, max =  360.0 }
     let input_stream = InputStreamStdin::new();
 
     for x in input_stream {
-        print!("\x1B[2J\x1B[1;1H");
         bars.update(x.key, x.value);
+        clear_screen();
         println!("{}", &bars);
     }
 }
