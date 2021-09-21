@@ -4,43 +4,11 @@ mod signals;
 
 use bars::Bars;
 use config::Config;
-use std::{
-    io::{Stdin, StdinLock},
-    thread, time,
-};
+use std::io::Stdin;
 
 struct InputRecord {
     key: String,
     value: f64,
-}
-
-struct InputStreamMock {
-    key_index: usize,
-    value: f64,
-}
-
-impl InputStreamMock {
-    fn new() -> Self {
-        Self {
-            key_index: 0,
-            value: 0.0,
-        }
-    }
-}
-
-impl Iterator for InputStreamMock {
-    type Item = InputRecord;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let key = if self.key_index == 0 { "A" } else { "B" };
-        self.value += 1.0;
-        self.key_index = if self.key_index == 0 { 1 } else { 0 };
-
-        Some(InputRecord {
-            key: key.into(),
-            value: self.value,
-        })
-    }
 }
 
 struct InputStreamStdin {
@@ -59,7 +27,7 @@ impl Iterator for InputStreamStdin {
 
     fn next(&mut self) -> Option<Self::Item> {
         let mut line = String::new();
-        std::io::stdin().read_line(&mut line).ok()?;
+        self.stdin.read_line(&mut line).ok()?;
 
         let (key, value) = line.split_once(' ')?;
         let value = value.trim();
@@ -97,5 +65,69 @@ range = { min = 0.0, max =  360.0 }
         bars.update(x.key, x.value);
         clear_screen();
         println!("{}", &bars);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct InputStreamMock {
+        key_index: usize,
+        value: f64,
+    }
+
+    impl InputStreamMock {
+        fn new() -> Self {
+            Self {
+                key_index: 0,
+                value: 0.0,
+            }
+        }
+    }
+
+    impl Iterator for InputStreamMock {
+        type Item = InputRecord;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            let key = if self.key_index == 0 { "A" } else { "B" };
+            self.value += 1.0;
+            self.key_index = if self.key_index == 0 { 1 } else { 0 };
+
+            Some(InputRecord {
+                key: key.into(),
+                value: self.value,
+            })
+        }
+    }
+
+    #[test]
+    fn test_input_mock() {
+        use std::fmt::Write;
+
+        let config = r#"
+[signals.A]
+name = "A"
+unit = "deg"
+range = { min = 0.0, max =  360.0 }
+
+[signals.B]
+name = "B"
+unit = "deg"
+range = { min = 0.0, max =  360.0 }
+"#;
+
+        let config: Config = config.parse().unwrap();
+
+        let mut bars = Bars::from(config);
+
+        let input_stream = InputStreamMock::new();
+
+        let mut s = String::new();
+
+        for x in input_stream.take(10) {
+            bars.update(x.key, x.value);
+            write!(s, "{}", &bars);
+        }
     }
 }
