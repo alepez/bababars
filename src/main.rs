@@ -6,12 +6,46 @@ use bars::Bars;
 use config::Config;
 use std::{thread, time};
 
+struct InputRecord {
+    key: String,
+    value: f64,
+}
+
+struct InputStream {
+    key_index: usize,
+    value: f64,
+}
+
+impl InputStream {
+    fn new() -> Self {
+        Self {
+            key_index: 0,
+            value: 0.0,
+        }
+    }
+}
+
+impl Iterator for InputStream {
+    type Item = InputRecord;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let key = if self.key_index == 0 { "A" } else { "B" };
+        self.value += 1.0;
+        self.key_index = if self.key_index == 0 { 1 } else { 0 };
+
+        Some(InputRecord {
+            key: key.into(),
+            value: self.value,
+        })
+    }
+}
+
 fn main() {
     let config = r#"
 [signals.A]
 name = "A"
-unit = "rad"
-range = { min = 0.0, max =  6.283185307179586 }
+unit = "deg"
+range = { min = 0.0, max =  360.0 }
 
 [signals.B]
 name = "B"
@@ -23,19 +57,12 @@ range = { min = 0.0, max =  360.0 }
 
     let mut bars = Bars::from(config.signals.clone());
 
-    let mut x = 0.0;
-    let mut y = 0.0;
+    let input_stream = InputStream::new();
 
-    loop {
-        x += 6.283185307179586 / 100.0;
-        y += 360.0 / 100.0;
-
+    for x in input_stream {
         print!("\x1B[2J\x1B[1;1H");
-
-        bars.update("A".into(), x);
-        bars.update("B".into(), y);
+        bars.update(x.key, x.value);
         println!("{}", &bars);
-
         thread::sleep(time::Duration::from_millis(100));
     }
 }
