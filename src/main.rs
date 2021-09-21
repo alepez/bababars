@@ -93,6 +93,5 @@ range = { min = 0.0, max =  360.0 }
         print!("\x1B[2J\x1B[1;1H");
         bars.update(x.key, x.value);
         println!("{}", &bars);
-        thread::sleep(time::Duration::from_millis(100));
     }
 }
