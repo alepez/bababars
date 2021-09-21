@@ -3,8 +3,14 @@ use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+pub(crate) struct Render {
+    pub width: usize,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub(crate) struct Config {
     pub signals: Signals,
+    pub render: Render,
 }
 
 impl FromStr for Config {
@@ -27,6 +33,9 @@ mod tests {
     #[test]
     fn test_config_signals() {
         let s = r#"
+[render]
+width = 100
+
 [signals.A]
 name = "A"
 unit = "rad"

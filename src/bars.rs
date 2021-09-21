@@ -78,7 +78,7 @@ impl std::fmt::Display for Bars {
 
 #[cfg(test)]
 mod tests {
-    use crate::signals::Range;
+    use crate::{config::Render, signals::Range};
 
     use super::*;
 
@@ -163,7 +163,9 @@ mod tests {
         signals.insert("A".into(), a);
         signals.insert("B".into(), b);
 
-        let config = Config { signals };
+        let render = Render { width: 100 };
+
+        let config = Config { signals, render };
 
         let mut bars = Bars::from(config);
 

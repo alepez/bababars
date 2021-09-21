@@ -106,6 +106,9 @@ mod tests {
         use std::fmt::Write;
 
         let config = r#"
+[render]
+width = 100
+
 [signals.A]
 name = "A"
 unit = "deg"
