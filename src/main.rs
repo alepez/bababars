@@ -4,19 +4,22 @@ mod signals;
 
 use bars::Bars;
 use config::Config;
-use std::{thread, time};
+use std::{
+    io::{Stdin, StdinLock},
+    thread, time,
+};
 
 struct InputRecord {
     key: String,
     value: f64,
 }
 
-struct InputStream {
+struct InputStreamMock {
     key_index: usize,
     value: f64,
 }
 
-impl InputStream {
+impl InputStreamMock {
     fn new() -> Self {
         Self {
             key_index: 0,
@@ -25,7 +28,7 @@ impl InputStream {
     }
 }
 
-impl Iterator for InputStream {
+impl Iterator for InputStreamMock {
     type Item = InputRecord;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -37,6 +40,33 @@ impl Iterator for InputStream {
             key: key.into(),
             value: self.value,
         })
+    }
+}
+
+struct InputStreamStdin {
+    stdin: Stdin,
+}
+
+impl InputStreamStdin {
+    fn new() -> Self {
+        let stdin = std::io::stdin();
+        Self { stdin }
+    }
+}
+
+impl Iterator for InputStreamStdin {
+    type Item = InputRecord;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut line = String::new();
+        std::io::stdin().read_line(&mut line).ok()?;
+
+        let (key, value) = line.split_once(' ')?;
+        let value = value.trim();
+        let value = value.parse().ok()?;
+        let key = key.into();
+
+        Some(InputRecord { key, value })
     }
 }
 
@@ -57,7 +87,7 @@ range = { min = 0.0, max =  360.0 }
 
     let mut bars = Bars::from(config.signals.clone());
 
-    let input_stream = InputStream::new();
+    let input_stream = InputStreamStdin::new();
 
     for x in input_stream {
         print!("\x1B[2J\x1B[1;1H");
