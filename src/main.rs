@@ -133,7 +133,7 @@ range = { min = 0.0, max =  360.0 }
 
         for x in input_stream.take(10) {
             bars.update(x.key, x.value);
-            write!(s, "{}", &bars);
+            write!(s, "{}", &bars).unwrap();
         }
 
         assert!(!s.is_empty());
