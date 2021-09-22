@@ -6,9 +6,23 @@ use bars::Bars;
 use config::Config;
 use std::{fs::read_to_string, io::Stdin};
 
+#[derive(Debug)]
 struct InputRecord {
     key: String,
     value: f64,
+}
+
+impl std::str::FromStr for InputRecord {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (key, value) = s.split_once(' ').ok_or(())?;
+        let value = value.trim();
+        let value = value.parse().ok().ok_or(())?;
+        let key = key.into();
+
+        Ok(InputRecord { key, value })
+    }
 }
 
 struct InputStreamStdin {
@@ -23,18 +37,15 @@ impl InputStreamStdin {
 }
 
 impl Iterator for InputStreamStdin {
-    type Item = InputRecord;
+    type Item = Option<InputRecord>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let mut line = String::new();
         self.stdin.read_line(&mut line).ok()?;
 
-        let (key, value) = line.split_once(' ')?;
-        let value = value.trim();
-        let value = value.parse().ok()?;
-        let key = key.into();
+        let record = line.parse().ok();
 
-        Some(InputRecord { key, value })
+        Some(record)
     }
 }
 
@@ -52,7 +63,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let input_stream = InputStreamStdin::new();
 
-    for x in input_stream {
+    for x in input_stream.filter_map(|x| x) {
         bars.update(x.key, x.value);
         clear_screen();
         println!("{}", &bars);
