@@ -4,7 +4,7 @@ mod signals;
 
 use bars::Bars;
 use config::Config;
-use std::io::Stdin;
+use std::{fs::read_to_string, io::Stdin};
 
 struct InputRecord {
     key: String,
@@ -42,23 +42,13 @@ fn clear_screen() {
     print!("\x1B[2J\x1B[1;1H");
 }
 
+const DEFAULT_CONFIG_FILE: &'static str = "bababars.toml";
+
 fn main() {
-    let config = r#"
-[render]
-width = 100
-
-[signals.A]
-name = "A"
-unit = "deg"
-range = { min = 0.0, max =  360.0 }
-
-[signals.B]
-name = "B"
-unit = "deg"
-range = { min = 0.0, max =  360.0 }
-"#;
-
-    let config: Config = config.parse().unwrap();
+    let config: Config = read_to_string(DEFAULT_CONFIG_FILE)
+        .unwrap()
+        .parse()
+        .unwrap();
 
     let mut bars = Bars::from(config);
 
