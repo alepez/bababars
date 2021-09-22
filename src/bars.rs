@@ -68,7 +68,7 @@ impl std::fmt::Display for Bar {
             }
         }
 
-        write!(f, "] {}", &self.signal.name)?;
+        write!(f, "] {:10}", &self.signal.name)?;
 
         if let Some(x) = self.value {
             write!(f, " {:10.3} ", x)?;
@@ -171,13 +171,13 @@ mod tests {
 
         let bar_str = bar.to_string();
 
-        assert_eq!(&bar_str, "[                                                                                                    ] A      0.000 (rad)");
+        assert_eq!(&bar_str, "[                                                                                                    ] A               0.000 (rad)");
 
         bar.update(3.14);
 
         let bar_str = bar.to_string();
 
-        assert_eq!(&bar_str, "[==================================================                                                  ] A      3.140 (rad)");
+        assert_eq!(&bar_str, "[==================================================                                                  ] A               3.140 (rad)");
     }
 
     #[test]
