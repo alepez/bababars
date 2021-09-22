@@ -27,11 +27,17 @@ impl Bar {
         let Range { min, max } = self.signal.range;
 
         if let Some(x) = self.value {
-            let width = self.width as Real;
-            let range_width = max - min;
-            let x = x as Real;
-            let y = (x / range_width) * width;
-            Fill::Ok(y.round() as usize)
+            if x > max {
+                Fill::Overflow
+            } else if x < min {
+                Fill::Underflow
+            } else {
+                let width = self.width as Real;
+                let range_width = max - min;
+                let x = x as Real;
+                let y = (x / range_width) * width;
+                Fill::Ok(y.round() as usize)
+            }
         } else {
             Fill::Undefined
         }
