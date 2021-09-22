@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use crate::signals::{Range, Real, Signal, SignalCode, Signals};
+use crate::signals::{Range, Real, Signal, SignalCode};
 use crate::Config;
 
 #[derive(Debug)]
@@ -119,6 +119,7 @@ impl std::fmt::Display for Bars {
 
 #[cfg(test)]
 mod tests {
+    use crate::signals::Signals;
     use crate::{config::Render, signals::Range};
 
     use super::*;
