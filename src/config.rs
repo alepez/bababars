@@ -33,8 +33,9 @@ width = 100
 
 [signals.A]
 name = "A"
-unit = "rad"
-range = { min = 0.0, max =  6.283185307179586 }
+unit = "deg"
+conversion = "x * 57.29578"
+range = { min = 0.0, max =  360.0 }
 
 [signals.B]
 name = "A"

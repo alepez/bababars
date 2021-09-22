@@ -133,6 +133,7 @@ mod tests {
                 min: 0.0,
                 max: 6.283185307179586,
             },
+            conversion: "x".into(),
         };
 
         let mut bar = Bar {
@@ -161,6 +162,7 @@ mod tests {
                 min: 0.0,
                 max: 6.283185307179586,
             },
+            conversion: "x".into(),
         };
 
         let mut bar = Bar {
@@ -191,6 +193,7 @@ mod tests {
                 min: 0.0,
                 max: 6.283185307179586,
             },
+            conversion: "x".into(),
         };
 
         let b = Signal {
@@ -200,6 +203,7 @@ mod tests {
                 min: 0.0,
                 max: 359.0,
             },
+            conversion: "x".into(),
         };
 
         signals.insert("A".into(), a);
