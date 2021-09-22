@@ -59,7 +59,12 @@ impl std::fmt::Display for Bar {
             Fill::Undefined => {
                 write!(f, "{:/^1$}", "", self.width)?;
             }
-            _ => todo!(),
+            Fill::Underflow => {
+                write!(f, "<{: ^1$}", "", self.width - 1)?;
+            }
+            Fill::Overflow => {
+                write!(f, "{:=^1$}>", "", self.width - 1)?;
+            }
         }
 
         write!(f, "] {}", &self.signal.name)?;
