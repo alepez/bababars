@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use crate::signals::{Real, Signal, SignalCode, Signals};
+use crate::signals::{Range, Real, Signal, SignalCode, Signals};
 use crate::Config;
 
 #[derive(Debug)]
@@ -24,9 +24,11 @@ impl Bar {
     }
 
     fn calculate_fill_width(&self) -> Fill {
+        let Range { min, max } = self.signal.range;
+
         if let Some(x) = self.value {
             let width = self.width as Real;
-            let range_width = self.signal.range.max - self.signal.range.min;
+            let range_width = max - min;
             let x = x as Real;
             let y = (x / range_width) * width;
             Fill::Ok(y.round() as usize)
