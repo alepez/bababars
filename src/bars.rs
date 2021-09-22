@@ -50,7 +50,7 @@ pub(crate) struct Bars(pub BTreeMap<SignalCode, Bar>);
 
 impl Bars {
     pub(crate) fn update(&mut self, code: String, value: Real) {
-        self.0.entry(code).and_modify(|x| x.value = Some(value));
+        self.0.entry(code).and_modify(|x| x.update(value));
     }
 }
 
