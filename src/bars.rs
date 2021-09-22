@@ -10,35 +10,56 @@ pub(crate) struct Bar {
     width: usize,
 }
 
+#[derive(Debug, PartialEq)]
+enum Fill {
+    Undefined,
+    Underflow,
+    Ok(usize),
+    Overflow,
+}
+
 impl Bar {
     fn update(&mut self, x: Real) {
         self.value = Some(x);
     }
 
-    fn calculate_fill_width(&self) -> usize {
+    fn calculate_fill_width(&self) -> Fill {
         if let Some(x) = self.value {
             let width = self.width as Real;
             let range_width = self.signal.range.max - self.signal.range.min;
             let x = x as Real;
             let y = (x / range_width) * width;
-            y.round() as usize
+            Fill::Ok(y.round() as usize)
         } else {
-            0
+            Fill::Undefined
         }
     }
 }
 
 impl std::fmt::Display for Bar {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let fill_width = self.calculate_fill_width();
-        let empty_width = self.width - fill_width;
         write!(f, "[")?;
-        write!(f, "{:=^1$}", "", fill_width)?;
-        write!(f, "{: ^1$}", "", empty_width)?;
+
+        let fill_width = self.calculate_fill_width();
+
+        match fill_width {
+            Fill::Ok(fill_width) => {
+                let empty_width = self.width - fill_width;
+                write!(f, "{:=^1$}", "", fill_width)?;
+                write!(f, "{: ^1$}", "", empty_width)?;
+            }
+            Fill::Undefined => {
+                write!(f, "{:/^1$}", "", self.width)?;
+            }
+            _ => todo!(),
+        }
+
         write!(f, "] {}", &self.signal.name)?;
 
         if let Some(x) = self.value {
             write!(f, " {:10.3} ", x)?;
+        } else {
+            write!(f, " ////////// ")?;
         }
 
         write!(f, "({})", &self.signal.unit)
@@ -107,13 +128,13 @@ mod tests {
 
         let fill_width = bar.calculate_fill_width();
 
-        assert_eq!(fill_width, 0);
+        assert_eq!(fill_width, Fill::Ok(0));
 
         bar.update(3.14);
 
         let fill_width = bar.calculate_fill_width();
 
-        assert_eq!(fill_width, 50);
+        assert_eq!(fill_width, Fill::Ok(50));
     }
 
     #[test]
