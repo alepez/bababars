@@ -45,7 +45,8 @@ fn clear_screen() {
 const DEFAULT_CONFIG_FILE: &'static str = "bababars.toml";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let config: Config = read_to_string(DEFAULT_CONFIG_FILE)?.parse().unwrap();
+    let config = read_to_string(DEFAULT_CONFIG_FILE)?;
+    let config: Config = config.parse()?;
 
     let mut bars = Bars::from(config);
 

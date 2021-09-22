@@ -14,15 +14,10 @@ pub(crate) struct Config {
 }
 
 impl FromStr for Config {
-    type Err = ();
+    type Err = toml::de::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let x = toml::from_str(s);
-        if let Ok(x) = x {
-            Ok(x)
-        } else {
-            Err(())
-        }
+        toml::from_str(s)
     }
 }
 
