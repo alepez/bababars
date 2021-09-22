@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 pub(crate) type Real = f64;
-pub(crate) type ConversionExpr = String;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub(crate) struct Range {
@@ -10,8 +9,17 @@ pub(crate) struct Range {
     pub max: Real,
 }
 
-fn default_conversion() -> String {
-    "x".to_string()
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+pub(crate) struct ConversionExpr(String);
+
+fn default_conversion() -> ConversionExpr {
+    ConversionExpr("x".to_string())
+}
+
+impl From<&str> for ConversionExpr {
+    fn from(s: &str) -> Self {
+        ConversionExpr(s.into())
+    }
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
