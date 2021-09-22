@@ -20,7 +20,8 @@ enum Fill {
 
 impl Bar {
     fn update(&mut self, x: Real) {
-        self.value = Some(x);
+        let y = self.signal.conversion.apply(x);
+        self.value = Some(y);
     }
 
     fn calculate_fill_width(&self) -> Fill {
