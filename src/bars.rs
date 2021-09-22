@@ -49,21 +49,22 @@ impl std::fmt::Display for Bar {
         write!(f, "[")?;
 
         let fill_width = self.calculate_fill_width();
+        let w = self.width;
 
         match fill_width {
             Fill::Ok(fill_width) => {
-                let empty_width = self.width - fill_width;
+                let empty_width = w - fill_width;
                 write!(f, "{:=^1$}", "", fill_width)?;
                 write!(f, "{: ^1$}", "", empty_width)?;
             }
             Fill::Undefined => {
-                write!(f, "{:/^1$}", "", self.width)?;
+                write!(f, "{:/^1$}", "", w)?;
             }
             Fill::Underflow => {
-                write!(f, "<{: ^1$}", "", self.width - 1)?;
+                write!(f, "<{: ^1$}", "", w - 1)?;
             }
             Fill::Overflow => {
-                write!(f, "{:=^1$}>", "", self.width - 1)?;
+                write!(f, "{:=^1$}>", "", w - 1)?;
             }
         }
 
