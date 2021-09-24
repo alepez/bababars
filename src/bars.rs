@@ -4,7 +4,7 @@ use crate::signals::{Range, Real, Signal, SignalCode};
 use crate::Config;
 
 #[derive(Debug)]
-pub(crate) struct Bar {
+pub(crate) struct TextBar {
     signal: Signal,
     value: Option<Real>,
     width: usize,
@@ -18,7 +18,7 @@ enum Fill {
     Overflow,
 }
 
-impl Bar {
+impl TextBar {
     fn update(&mut self, x: Real) {
         let y = self.signal.conversion.apply(x);
         self.value = Some(y);
@@ -45,7 +45,7 @@ impl Bar {
     }
 }
 
-impl std::fmt::Display for Bar {
+impl std::fmt::Display for TextBar {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
 
@@ -82,22 +82,22 @@ impl std::fmt::Display for Bar {
 }
 
 #[derive(Debug, Default)]
-pub(crate) struct Bars(pub BTreeMap<SignalCode, Bar>);
+pub(crate) struct TextBars(pub BTreeMap<SignalCode, TextBar>);
 
-impl Bars {
+impl TextBars {
     pub(crate) fn update(&mut self, code: String, value: Real) {
         self.0.entry(code).and_modify(|x| x.update(value));
     }
 }
 
-impl From<Config> for Bars {
+impl From<Config> for TextBars {
     fn from(config: Config) -> Self {
-        let mut bars = Bars::default();
+        let mut bars = TextBars::default();
 
         let Config { signals, render } = config;
 
         for s in signals {
-            let bar = Bar {
+            let bar = TextBar {
                 signal: s.1.clone(),
                 value: None,
                 width: render.width,
@@ -109,7 +109,7 @@ impl From<Config> for Bars {
     }
 }
 
-impl std::fmt::Display for Bars {
+impl std::fmt::Display for TextBars {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for (_, bar) in &self.0 {
             write!(f, "{}\n", bar)?;
@@ -137,7 +137,7 @@ mod tests {
             conversion: "x".into(),
         };
 
-        let mut bar = Bar {
+        let mut bar = TextBar {
             signal,
             value: Some(0.0),
             width: 100,
@@ -166,7 +166,7 @@ mod tests {
             conversion: "x".into(),
         };
 
-        let mut bar = Bar {
+        let mut bar = TextBar {
             signal,
             value: Some(0.0),
             width: 100,
@@ -214,7 +214,7 @@ mod tests {
 
         let config = Config { signals, render };
 
-        let mut bars = Bars::from(config);
+        let mut bars = TextBars::from(config);
 
         bars.update("A".into(), 5.0);
         bars.update("B".into(), 100.0);

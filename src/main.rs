@@ -3,7 +3,7 @@ mod config;
 mod input;
 mod signals;
 
-use crate::bars::Bars;
+use crate::bars::TextBars;
 use crate::config::Config;
 use crate::input::InputStreamStdin;
 use std::fs::read_to_string;
@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = read_to_string(DEFAULT_CONFIG_FILE)?;
     let config: Config = config.parse()?;
 
-    let mut bars = Bars::from(config);
+    let mut bars = TextBars::from(config);
 
     let input_stream = InputStreamStdin::new();
 
