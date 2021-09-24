@@ -3,6 +3,14 @@ use std::collections::BTreeMap;
 use crate::signals::{Range, Real, Signal, SignalCode};
 use crate::Config;
 
+pub(crate) trait Bar {
+    fn update(&mut self, x: Real);
+}
+
+pub(crate) trait Bars {
+    fn update(&mut self, code: String, value: Real);
+}
+
 #[derive(Debug)]
 pub(crate) struct TextBar {
     signal: Signal,
