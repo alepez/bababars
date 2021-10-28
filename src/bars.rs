@@ -44,7 +44,7 @@ impl TextBar {
                 let width = self.width as Real;
                 let range_width = max - min;
                 let x = x as Real;
-                let y = (x / range_width) * width;
+                let y = ((x - min) / range_width) * width;
                 Fill::Ok(y.round() as usize)
             }
         } else {
@@ -189,6 +189,29 @@ mod tests {
         let bar_str = bar.to_string();
 
         assert_eq!(&bar_str, "[==================================================                                                  ] A               3.140 (rad)");
+    }
+
+    #[test]
+    fn test_bar_display_negative() {
+        let signal = Signal {
+            name: "A".into(),
+            unit: "rad".into(),
+            range: Range {
+                min: -10.0,
+                max: 10.0,
+            },
+            conversion: "x".into(),
+        };
+
+        let bar = TextBar {
+            signal,
+            value: Some(-5.0),
+            width: 100,
+        };
+
+        let bar_str = bar.to_string();
+
+        assert_eq!(&bar_str, "[=========================                                                                           ] A              -5.000 (rad)");
     }
 
     #[test]
